@@ -24,6 +24,9 @@ class Joc extends Component {
     this.updateMatrix = this.updateMatrix.bind(this)
     this.checkArray = this.checkArray.bind(this)
     this.checkWinner = this.checkWinner.bind(this)
+    this.checkFirstDiagonal = this.checkFirstDiagonal.bind(this)
+    this.checkSecondDiagonal = this.checkSecondDiagonal.bind(this)
+    this.checkLines = this.checkLines.bind(this)
   }
 
   state = initialValues
@@ -37,6 +40,8 @@ class Joc extends Component {
 
     return null
   }
+
+
 
   checkArray (array) {
     let i,
@@ -59,31 +64,85 @@ console.log('arrayul', array);
     return winner
   }
 
+  checkFirstDiagonal () {
+    let winner = true, i = 0;
+    const matrix = this.state.matrix;
+    //first Diagonal
+    for (i = 0; i < 2; i++) {
+      if (matrix[i+1][i+1] != -1) {
+        if (matrix[i][i] != matrix[i+1][i+1]) {
+          winner = false
+        }
+      } else {
+        winner = false
+      }
+    }
+
+    return winner;
+  }
+
+  checkSecondDiagonal () {
+    console.log('check 2nd');
+    let winner = true, i = 0
+    const matrix = this.state.matrix;
+
+    //second Diagonal
+    for (i = 0; i < 2; i++) {
+      if (matrix[i][2-i] !== -1) {
+        if (matrix[i][2-i] !== matrix[i+1][2- (i + 1)]) {
+          winner = false
+        }
+      } else {
+      winner = false
+    }
+    }
+
+    return winner
+  }
+
+  checkLines () {
+    let i, j, matrix = this.state.matrix, winner = true
+    for (i = 0; i < 3; i++) {
+      for (j = 0; j < 2; j++) {
+        if (matrix[i][j] !== -1 || matrix[i][j+1] !== -1) {
+          console.log('here', matrix[i][j], matrix[i][j+1]);
+          if (matrix[i][j] !== matrix[i][j+1] && j+1 != 3) {
+            winner = false
+          }
+        } else {
+          winner = false
+        }
+      }
+    }
+
+    return winner
+  }
+
   checkWinner (position) {
     let i, j, diag1=[], diag2=[];
     let matrix = this.state.matrix
 
-    let winner = false
+    let winner
+    // debugger
 
-    for (i = 0; i < 3; i++) {
-      for (j = 0; j < 3; j++) {
 
-        if (matrix[i][j]) {
-
-          console.log('eu')
-        if (i === j) {
-          console.log('push diag1', matrix[i][j]);
-          diag1.push(matrix[i][j])
-        } else {
-          if (i+j === 4) {
-            console.log('push diag2');
-
-            diag2.push(matrix[i][j])
-          }
-        }
-      }
-      }
-    }
+    // for (i = 0; i < 3; i++) {
+    //   for (j = 0; j < 3; j++) {
+    //     if (matrix[i][j]) {
+    //
+    //     if (i === j) {
+    //       console.log('push diag1', matrix[i][j]);
+    //       diag1.push(matrix[i][j])
+    //     } else {
+    //       if (i+j === 4) {
+    //         console.log('push diag2');
+    //
+    //         diag2.push(matrix[i][j])
+    //       }
+    //     }
+    //   }
+    //   }
+    // }
 
     // console.log('tyuiop', this.checkArray(diag1));
     // if (this.checkArray(diag1)) {
@@ -131,8 +190,8 @@ console.log('arrayul', array);
     //     return winner
     //   }
     // }
-
-    return winner
+    console.log(this.checkLines());
+    return this.checkFirstDiagonal() || this.checkSecondDiagonal() || this.checkLines()
   }
 
   updateMatrix (position, value, cb) {
